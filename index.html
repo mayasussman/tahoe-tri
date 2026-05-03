@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tahoe Off-Road Tri · Training Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pine:#1a2e1e;--forest:#2d4a32;--sage:#5c7c5f;--lake:#2b6ca8;--lake-light:#4a8ec4;
+    --snow:#f4f0e8;--stone:#c8bfa8;--rust:#c4622d;--gold:#d4a843;--text:#1a1a14;
+    --muted:#6b6455;--broken:#b83a20;--bg:#f0ece2;--strava:#FC4C02;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.6;min-height:100vh}
+
+  /* ── HERO ── */
+  .hero{background:var(--pine);color:var(--snow);padding:36px 32px 28px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(43,108,168,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 10% 90%,rgba(92,124,95,.2) 0%,transparent 60%);pointer-events:none}
+  .hero-inner{position:relative;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
+  .hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
+  .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,60px);line-height:.92;letter-spacing:.02em;color:var(--snow)}
+  .hero h1 span{color:var(--lake-light)}
+  .hero-right{display:flex;flex-direction:column;gap:10px;flex-shrink:0;min-width:170px}
+  .progress-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px 16px}
+  .progress-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
+  .progress-bar-wrap{background:rgba(255,255,255,.1);border-radius:3px;height:5px;margin-bottom:5px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .4s ease}
+  .progress-text{font-family:'DM Mono',monospace;font-size:10px;color:var(--stone)}
+
+  /* ── STRAVA PANEL ── */
+  .strava-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px 14px}
+  .strava-connect-btn{display:flex;align-items:center;gap:7px;background:var(--strava);color:white;border:none;border-radius:4px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;width:100%;justify-content:center;transition:opacity .15s}
+  .strava-connect-btn:hover{opacity:.88}
+  .strava-connected{display:flex;align-items:center;gap:7px}
+  .strava-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover}
+  .strava-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--snow);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strava-sync-btn{background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:var(--strava);border-radius:3px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .15s}
+  .strava-sync-btn:hover{background:rgba(252,76,2,.25)}
+  .strava-sync-btn:disabled{opacity:.4;cursor:default}
+  .strava-status{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);margin-top:4px}
+  .strava-status.syncing{color:var(--gold)}
+  .strava-status.error{color:#e07060}
+
+  /* ── RACE RIBBON ── */
+  .race-ribbon{background:var(--forest);padding:10px 32px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .race-ribbon-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone)}
+  .race-chip{display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:3px;font-size:11px;font-weight:500;color:white;white-space:nowrap}
+  .chip-broken{background:var(--broken)}.chip-tahoe{background:var(--lake)}
+  .chip-date{font-family:'DM Mono',monospace;font-size:9px;opacity:.7;font-weight:400}
+
+  /* ── LAYOUT ── */
+  .container{max-width:880px;margin:0 auto;padding:28px 18px 56px}
+  .phase-header{display:flex;align-items:baseline;gap:12px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--stone)}
+  .phase-header:first-of-type{margin-top:0}
+  .phase-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--stone);line-height:1;opacity:.4}
+  .phase-info h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--pine);line-height:1}
+  .phase-info p{font-size:11px;color:var(--muted);margin-top:2px}
+  .phase-weeks{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--lake);text-transform:uppercase;white-space:nowrap}
+
+  /* ── WEEK CARD ── */
+  .week-card{background:white;border:1px solid #ddd6c8;border-radius:6px;margin-bottom:8px;overflow:hidden}
+  .week-card.past{opacity:.52}
+  .week-card.current{border-color:var(--gold);border-width:2px;box-shadow:0 0 0 3px rgba(212,168,67,.12)}
+  .week-card.race-broken{border-color:var(--broken);border-width:2px}
+  .week-card.race-tahoe{border-color:var(--lake);border-width:2px}
+  .week-card.current.race-broken{border-color:var(--broken);box-shadow:0 0 0 3px rgba(184,58,32,.12)}
+  .week-card.current.race-tahoe{border-color:var(--lake);box-shadow:0 0 0 3px rgba(43,108,168,.12)}
+  .week-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#faf8f4;border-bottom:1px solid #ede7dc;cursor:pointer;user-select:none}
+  .week-card.current .week-header{background:#fffbee}
+  .week-card.past .week-header{background:#f8f6f2}
+  .week-card.race-broken .week-header{background:#fdf2ee}
+  .week-card.race-tahoe .week-header{background:#eef4fb}
+  .current-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:var(--gold);color:#5a3800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .past-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:#e8e4dc;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .week-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;min-width:46px}
+  .week-title{font-size:12px;font-weight:500;color:var(--text);flex:1}
+  .week-progress{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+  .week-progress.all-done{color:#3a8a3a;font-weight:500}
+  .week-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+  .badge-build{background:#e8f0e8;color:#3a6b3a}.badge-recovery{background:#fef3e2;color:#a06820}
+  .badge-peak{background:#fde8e0;color:#a03020}.badge-taper{background:#e8eef8;color:#2a4a8a}
+  .badge-broken{background:#fce8e0;color:#9a2a10}.badge-race{background:#e0eef8;color:#1a4a8a}
+  .week-toggle{font-size:13px;color:var(--stone);transition:transform .2s;line-height:1}
+  .week-card.open .week-toggle{transform:rotate(180deg)}
+  .week-body{display:none}.week-card.open .week-body{display:block}
+
+  /* ── DAY SLOTS ── */
+  .day-slots{padding:4px 0}
+  .day-row{display:flex;align-items:stretch;min-height:44px;border-bottom:1px solid #f4f0e8}
+  .day-row:last-child{border-bottom:none}
+  .day-row.today-row{background:#fffbee}
+  .day-label-col{width:72px;flex-shrink:0;padding:10px 8px 10px 14px;display:flex;flex-direction:column;justify-content:flex-start;border-right:1px solid #f0ece4;padding-top:12px}
+  .day-name{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .day-name.today-label{color:var(--lake)}
+  .day-content-col{flex:1;padding:5px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+
+  /* ── SLOT ── */
+  .slot-row{display:flex;flex-direction:column;gap:3px;padding:3px 4px;border-radius:4px;transition:background .1s}
+  .slot-row+.slot-row{border-top:1px dashed #eee8dc;margin-top:3px;padding-top:5px}
+  .slot-row.drag-over{background:#eef5fb;outline:2px dashed var(--lake-light);outline-offset:-1px}
+  .slot-qual{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;margin-bottom:1px}
+  .slot-wos{display:flex;flex-direction:column;gap:3px}
+
+  /* ── WORKOUT CARD ── */
+  .workout-card{display:flex;align-items:flex-start;gap:7px;padding:6px 8px;border-radius:4px;border:1px solid #eae4d8;background:#fdfbf7;cursor:grab;transition:background .1s,opacity .15s}
+  .workout-card:hover{background:#f8f4ec;border-color:#ddd5c0}
+  .workout-card.completed{opacity:.48}
+  .workout-card.completed .workout-name{text-decoration:line-through;color:var(--muted)}
+  .workout-card.anchor-card{background:#fffbee;border-color:#e8d898}
+  .workout-card.anchor-card:hover{background:#fff8e0}
+  .workout-card.dragging{opacity:.25;cursor:grabbing}
+  .workout-card.race-card{background:#eef4fb;border-color:#b8d4ec}
+  .workout-card.race-card-broken{background:#fdf2ee;border-color:#e8b8a0}
+  .workout-card.rest-card{cursor:default;opacity:.5}
+  .workout-check{flex-shrink:0;width:15px;height:15px;margin-top:2px;border:1.5px solid #ccc;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;background:white}
+  .workout-check:hover{border-color:var(--lake)}
+  .workout-check.checked{background:var(--lake);border-color:var(--lake)}
+  .workout-check.checked::after{content:'';display:block;width:8px;height:5px;border-left:1.5px solid white;border-bottom:1.5px solid white;transform:rotate(-45deg) translateY(-1px)}
+  .rest-card .workout-check{pointer-events:none;opacity:.35}
+  .workout-body{flex:1;min-width:0}
+  .workout-top-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:2px}
+  .type-pill{display:inline-block;padding:1px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+  .pill-swim{background:#deeef8;color:#1a5a90}.pill-bike{background:#deeede;color:#2a6b2a}
+  .pill-run{background:#fce8dc;color:#8a3010}.pill-brick{background:#eee0f4;color:#6a2a9a}
+  .pill-strength{background:#fef8dc;color:#7a6010}.pill-rest{background:#f0ece4;color:#7a6e60}
+  .pill-race{background:#fff0d0;color:#8a5010;border:1px solid #e0b040}.pill-ows{background:#d0e8f8;color:#1a5a90}
+  .pill-travel{background:#e8e8f4;color:#404080}
+  .anchor-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#aa8800;background:#fff0c0;padding:1px 4px;border-radius:2px}
+  .workout-name{font-size:12px;color:var(--text);line-height:1.35}
+  .workout-detail{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;line-height:1.35}
+  .slot-empty{font-family:'DM Mono',monospace;font-size:10px;color:#ccc;padding:3px 2px;height:28px;display:flex;align-items:center}
+
+  /* ── STRAVA ACTIVITY BADGE ── */
+  .strava-badge{display:flex;align-items:center;gap:5px;margin-top:4px;padding:3px 6px;background:rgba(252,76,2,.06);border:1px solid rgba(252,76,2,.18);border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;color:#b03a00}
+  .strava-badge svg{flex-shrink:0;opacity:.8}
+  .strava-badge-stats{flex:1;display:flex;gap:6px;flex-wrap:wrap}
+  .strava-badge-name{flex:1;font-size:9px;color:var(--muted);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:300}
+  .strava-badge a{color:var(--strava);text-decoration:none;font-size:9px;opacity:.7;flex-shrink:0}
+  .strava-badge a:hover{opacity:1}
+
+  /* ── RACE BANNER ── */
+  .race-banner{margin:6px 14px 2px;border-radius:4px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;border:1px solid #e8b0a0;background:#fdf2ee;font-size:11px}
+  .race-banner h4{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.05em;color:var(--broken);margin-bottom:3px}
+  .race-banner p{color:var(--muted);line-height:1.45}
+  .race-banner p strong{color:var(--text);font-weight:500}
+  .week-notes{margin:4px 14px 12px;background:#fdf8ec;border-left:3px solid var(--gold);padding:9px 12px;font-size:11px;color:var(--muted);border-radius:0 3px 3px 0;line-height:1.5}
+  .week-notes strong{color:var(--text);font-weight:500}
+
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(26,46,30,.6);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:white;border-radius:8px;padding:28px;max-width:440px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2)}
+  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--pine);margin-bottom:4px}
+  .modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .modal-sub a{color:var(--lake)}
+  .modal-field{margin-bottom:14px}
+  .modal-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .modal-field input{width:100%;border:1px solid #ddd6c8;border-radius:4px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);background:#fdfbf7;outline:none;transition:border-color .15s}
+  .modal-field input:focus{border-color:var(--lake)}
+  .modal-actions{display:flex;gap:8px;margin-top:20px}
+  .btn-primary{flex:1;background:var(--strava);color:white;border:none;border-radius:4px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
+  .btn-primary:hover{opacity:.88}
+  .btn-secondary{background:none;color:var(--muted);border:1px solid #ddd6c8;border-radius:4px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:border-color .15s}
+  .btn-secondary:hover{border-color:var(--stone)}
+  .modal-setup-note{margin-top:16px;padding:10px 12px;background:#f4f0e8;border-radius:4px;font-size:11px;color:var(--muted);line-height:1.6}
+  .modal-setup-note code{font-family:'DM Mono',monospace;font-size:10px;background:#e8e4dc;padding:1px 4px;border-radius:2px}
+  .modal-disconnect{margin-top:12px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline}
+  .modal-disconnect:hover{color:var(--broken)}
+  .modal-error{margin-top:8px;font-size:11px;color:var(--broken);font-family:'DM Mono',monospace}
+
+  footer{background:var(--pine);color:var(--stone);text-align:center;padding:16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;margin-top:48px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Interactive Training Plan · 15 Weeks · 2026</div>
+      <h1>Tahoe <span>Off-Road</span> Tri</h1>
+    </div>
+    <div class="hero-right">
+      <div class="progress-panel">
+        <div class="progress-label">Overall progress</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="global-bar" style="width:0%"></div></div>
+        <div class="progress-text" id="global-text">0 / 0 workouts done</div>
+      </div>
+      <div class="strava-panel" id="strava-panel">
+        <button class="strava-connect-btn" id="strava-btn" onclick="openStravaModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+          Connect Strava
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="race-ribbon">
+  <span class="race-ribbon-label">Races →</span>
+  <div class="race-chip chip-broken">⛰ Broken Arrow 23K <span class="chip-date">&nbsp;Jun 21 · 14.25 mi · 4,500 ft</span></div>
+  <div class="race-chip chip-tahoe">🚵 Tahoe Off-Road Tri <span class="chip-date">&nbsp;Jul 11 · Swim + MTB + Run</span></div>
+</div>
+
+<div class="container" id="plan-root"></div>
+
+<footer>Broken Arrow 23K · Jun 21 &nbsp;|&nbsp; Tahoe Off-Road Tri · Jul 11 &nbsp;|&nbsp; Mill Valley → Tahoe → Tahoe City</footer>
+
+<!-- Strava Setup Modal -->
+<div class="modal-overlay" id="strava-modal">
+  <div class="modal">
+    <h3 id="modal-title">Connect to Strava</h3>
+    <p class="modal-sub" id="modal-sub">
+      Strava will auto-detect completed workouts and show your activity stats.<br>
+      You'll need a free <a href="https://www.strava.com/settings/api" target="_blank">Strava API app</a> — takes 2 minutes to create.
+    </p>
+    <div class="modal-field">
+      <label>Client ID</label>
+      <input type="text" id="cfg-client-id" placeholder="123456" inputmode="numeric">
+    </div>
+    <div class="modal-field">
+      <label>Client Secret</label>
+      <input type="password" id="cfg-client-secret" placeholder="abc123...">
+    </div>
+    <div class="modal-error" id="modal-error"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeStravaModal()">Cancel</button>
+      <button class="btn-primary" id="modal-save-btn" onclick="saveStravaConfig()">
+        Save &amp; Connect →
+      </button>
+    </div>
+    <div class="modal-setup-note">
+      <strong>Setup steps:</strong><br>
+      1. Create an app at strava.com/settings/api<br>
+      2. Set "Authorization Callback Domain" to <code>localhost</code><br>
+      3. Serve this folder: <code>python3 -m http.server 8080</code><br>
+      4. Open <code>http://localhost:8080</code>
+    </div>
+    <div class="modal-disconnect" id="modal-disconnect-link" style="display:none" onclick="disconnectStrava()">
+      Disconnect Strava
+    </div>
+  </div>
+</div>
+
+<script src="plan.js"></script>
+<script src="strava.js"></script>
+<script>
+// ── TODAY ──────────────────────────────────────────────────────────────────
+const TODAY = new Date();
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let S = { done:{}, moved:{}, open:{} };
+// stravaMatches is derived at sync time and stored separately
+let stravaMatches = {};
+
+// ── STORAGE ────────────────────────────────────────────────────────────────
+async function loadS() {
+  // Try window.storage (Claude environment) first, then localStorage
+  try {
+    if (window.storage) {
+      const r = await window.storage.get('tahoe-plan-v5');
+      if (r && r.value) { S = JSON.parse(r.value); }
+    }
+  } catch(e) {}
+  // Also check localStorage (new key for the updated app)
+  const local = localStorage.getItem('tahoe-tri-v1');
+  if (local) {
+    const parsed = JSON.parse(local);
+    // Merge: localStorage wins for keys not in window.storage result
+    S = { ...parsed, ...S };
+  }
+  if (!S.done)  S.done  = {};
+  if (!S.moved) S.moved = {};
+  if (!S.open)  S.open  = {};
+}
+
+async function saveS() {
+  const json = JSON.stringify(S);
+  try { if (window.storage) await window.storage.set('tahoe-plan-v5', json); } catch(e) {}
+  localStorage.setItem('tahoe-tri-v1', json);
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function parseD(s) { const[y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function isPast(start)    { const e=new Date(parseD(start)); e.setDate(e.getDate()+6); return TODAY>e; }
+function isCurrent(start) { const s=parseD(start),e=new Date(s); e.setDate(e.getDate()+6); return TODAY>=s&&TODAY<=e; }
+function isToday(start,di){ const d=new Date(parseD(start)); d.setDate(d.getDate()+di); return d.toDateString()===TODAY.toDateString(); }
+
+function slotKey(wid, day, qual) { return wid+'|'+day+'|'+(qual||''); }
+
+function getSlotWorkouts(wid, day, qual, defaultWos) {
+  const k = slotKey(wid, day, qual);
+  if (S.moved[k]) {
+    const all = buildWoMap();
+    return S.moved[k].map(id => all[id]).filter(Boolean);
+  }
+  return defaultWos;
+}
+
+function buildWoMap() {
+  const m = {};
+  PLAN.forEach(p => p.weeks.forEach(w => w.days.forEach(d => d.slots.forEach(s => s.workouts.forEach(wo => m[wo.id] = wo)))));
+  return m;
+}
+
+const PILL = t => ({swim:'pill-swim',bike:'pill-bike',run:'pill-run',brick:'pill-brick',strength:'pill-strength',rest:'pill-rest',race:'pill-race',ows:'pill-ows',travel:'pill-travel'}[t]||'pill-rest');
+
+// ── DRAG STATE ─────────────────────────────────────────────────────────────
+let drag = null;
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function renderStravaBadge(woId) {
+  const m = stravaMatches[woId];
+  if (!m) return '';
+  const parts = [
+    StravaClient.fmtDist(m.distance, m.sportType?.toLowerCase()),
+    StravaClient.fmtTime(m.movingTime),
+    StravaClient.fmtElev(m.elevation),
+  ].filter(Boolean);
+  return `<div class="strava-badge">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="#FC4C02"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+    <span class="strava-badge-name">${m.name}</span>
+    <span class="strava-badge-stats">${parts.join(' · ')}</span>
+    <a href="${StravaClient.activityUrl(m.stravaId)}" target="_blank">↗</a>
+  </div>`;
+}
+
+function renderWo(wo) {
+  const done = !!(S.done[wo.id] || stravaMatches[wo.id]);
+  const manuallyDone = !!S.done[wo.id];
+  const cls = ['workout-card', done?'completed':'', wo.anchor?'anchor-card':'', wo.raceCard||'', wo.rest?'rest-card':''].filter(Boolean).join(' ');
+  return `<div class="${cls}" id="wc-${wo.id}" draggable="${wo.rest?'false':'true'}" ondragstart="ds(event,'${wo.id}')">
+    <div class="workout-check ${(manuallyDone || (done && !stravaMatches[wo.id]))?'checked':stravaMatches[wo.id]?'checked':''}"
+         onclick="${wo.rest?'':'toggle(\''+wo.id+'\')'}"></div>
+    <div class="workout-body">
+      <div class="workout-top-row">
+        <span class="type-pill ${PILL(wo.type)}">${wo.label}</span>
+        ${wo.anchor?'<span class="anchor-tag">anchor</span>':''}
+      </div>
+      <div class="workout-name">${wo.name}</div>
+      ${wo.detail?`<div class="workout-detail">${wo.detail}</div>`:''}
+      ${renderStravaBadge(wo.id)}
+    </div>
+  </div>`;
+}
+
+function renderWeek(w) {
+  const past = isPast(w.start), cur = isCurrent(w.start);
+  const isOpen = S.open[w.id] !== undefined ? S.open[w.id] : (cur || !past);
+  const allWos = w.days.flatMap(d => d.slots.flatMap(s => s.workouts)).filter(wo => !wo.rest);
+  const doneN  = allWos.filter(wo => S.done[wo.id] || stravaMatches[wo.id]).length;
+  const allDone = doneN === allWos.length && allWos.length > 0;
+  const pCls = allDone ? 'week-progress all-done' : 'week-progress';
+  const pTxt = allDone ? '✓ done' : `${doneN}/${allWos.length}`;
+  const statusBadge = cur ? '<span class="current-badge">this week</span>' : past ? '<span class="past-badge">past</span>' : '';
+  const cls = ['week-card', cur?'current':past?'past':'', w.raceClass||'', isOpen?'open':''].filter(Boolean).join(' ');
+
+  const daysHtml = w.days.map((d, di) => {
+    const tod = isToday(w.start, di);
+    const slotsHtml = d.slots.map(sl => {
+      const wos = getSlotWorkouts(w.id, d.day, sl.qual, sl.workouts);
+      const k = slotKey(w.id, d.day, sl.qual);
+      const cards = wos.length ? wos.map(renderWo).join('') : '<div class="slot-empty">—</div>';
+      return `<div class="slot-row" data-key="${k}" ondragover="dov(event)" ondragleave="dlv(event)" ondrop="dp(event,'${k}')">
+        ${sl.qual ? `<div class="slot-qual">${sl.qual}</div>` : ''}
+        <div class="slot-wos">${cards}</div>
+      </div>`;
+    }).join('');
+    return `<div class="day-row${tod?' today-row':''}">
+      <div class="day-label-col"><span class="day-name${tod?' today-label':''}">${d.day}</span></div>
+      <div class="day-content-col">${slotsHtml}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="${cls}" id="week-${w.id}">
+    <div class="week-header" onclick="wt('${w.id}')">
+      <span class="week-num">Wk ${w.num}</span>
+      <span class="week-title">${w.title}</span>
+      ${statusBadge}
+      <span class="${pCls}">${pTxt}</span>
+      <span class="week-badge badge-${w.badge}">${w.badge}</span>
+      <span class="week-toggle">▾</span>
+    </div>
+    <div class="week-body">
+      ${w.raceBanner ? `<div class="race-banner"><span style="font-size:18px;flex-shrink:0">⛰</span><div><h4>${w.raceBanner.title}</h4><p>${w.raceBanner.body}</p></div></div>` : ''}
+      <div class="day-slots">${daysHtml}</div>
+      ${w.notes ? `<div class="week-notes">${w.notes}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function renderAll() {
+  document.getElementById('plan-root').innerHTML = PLAN.map(p => `
+    <div class="phase-header">
+      <div class="phase-num">${String(p.phase).padStart(2,'0')}</div>
+      <div class="phase-info"><h2>${p.phaseTitle}</h2><p>${p.phaseDesc}</p></div>
+      <div class="phase-weeks">${p.phaseWeeks}</div>
+    </div>
+    ${p.weeks.map(renderWeek).join('')}
+  `).join('');
+
+  let tot = 0, dn = 0;
+  PLAN.forEach(p => p.weeks.forEach(w => {
+    const wos = w.days.flatMap(d => d.slots.flatMap(s => s.workouts)).filter(wo => !wo.rest);
+    tot += wos.length;
+    dn  += wos.filter(wo => S.done[wo.id] || stravaMatches[wo.id]).length;
+  }));
+  const pct = tot ? Math.round(dn / tot * 100) : 0;
+  document.getElementById('global-bar').style.width = pct + '%';
+  document.getElementById('global-text').textContent = `${dn} / ${tot} workouts done`;
+}
+
+// ── INTERACTIONS ───────────────────────────────────────────────────────────
+function wt(wid) {
+  const card = document.getElementById('week-' + wid);
+  const open = card.classList.contains('open');
+  S.open[wid] = !open;
+  card.classList.toggle('open', !open);
+  card.querySelector('.week-toggle').style.transform = !open ? 'rotate(180deg)' : '';
+  saveS();
+}
+
+function toggle(id) {
+  // If Strava matched this, toggling off means user is explicitly un-completing it
+  if (stravaMatches[id] && !S.done[id]) {
+    // Mark as explicitly suppressed
+    S.done[id] = false;
+  } else {
+    S.done[id] = !S.done[id];
+  }
+  saveS();
+  renderAll();
+}
+
+// ── DRAG & DROP ────────────────────────────────────────────────────────────
+function parseKey(k) { const[wid,day,qual]=k.split('|'); return{wid,day,qual:qual||''}; }
+
+function findNativeSlot(woId) {
+  for (const p of PLAN) for (const w of p.weeks) for (const d of w.days) for (const s of d.slots) {
+    if (s.workouts.find(wo => wo.id === woId)) return slotKey(w.id, d.day, s.qual);
+  }
+  return null;
+}
+
+function findCurrentSlot(woId) {
+  for (const [k, ids] of Object.entries(S.moved)) { if (ids.includes(woId)) return k; }
+  return findNativeSlot(woId);
+}
+
+function getEffectiveIds(slotK) {
+  if (S.moved[slotK]) return [...S.moved[slotK]];
+  const { wid, day, qual } = parseKey(slotK);
+  let wk = null;
+  PLAN.forEach(p => p.weeks.forEach(w => { if (w.id === wid) wk = w; }));
+  if (!wk) return [];
+  const d = wk.days.find(d => d.day === day);
+  if (!d) return [];
+  const s = d.slots.find(s => (s.qual||'') === (qual||''));
+  return s ? s.workouts.map(wo => wo.id) : [];
+}
+
+function ds(e, id) {
+  drag = { id, fromKey: findCurrentSlot(id) };
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = document.getElementById('wc-'+id); if(el) el.classList.add('dragging'); }, 0);
+}
+
+function dov(e) { e.preventDefault(); e.dataTransfer.dropEffect='move'; e.currentTarget.classList.add('drag-over'); }
+function dlv(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function dp(e, toKey) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!drag) return;
+  const { id, fromKey } = drag; drag = null;
+  if (fromKey === toKey) { renderAll(); return; }
+  S.moved[fromKey] = getEffectiveIds(fromKey).filter(i => i !== id);
+  S.moved[toKey]   = [...getEffectiveIds(toKey), id];
+  saveS(); renderAll();
+}
+
+document.addEventListener('dragend', () => {
+  document.querySelectorAll('.workout-card.dragging').forEach(el => el.classList.remove('dragging'));
+  document.querySelectorAll('.slot-row.drag-over').forEach(el => el.classList.remove('drag-over'));
+  drag = null;
+});
+
+// ── STRAVA UI ──────────────────────────────────────────────────────────────
+function renderStravaPanel() {
+  const panel = document.getElementById('strava-panel');
+  if (!strava.isConnected()) {
+    panel.innerHTML = `<button class="strava-connect-btn" id="strava-btn" onclick="openStravaModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
+      Connect Strava
+    </button>`;
+    return;
+  }
+  const info = strava.getAthleteInfo();
+  const cached = strava.getCachedActivities();
+  const lastSync = cached ? new Date(cached.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : null;
+  panel.innerHTML = `
+    <div class="strava-connected">
+      ${info?.avatar ? `<img class="strava-avatar" src="${info.avatar}" alt="">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="#FC4C02"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>`}
+      <span class="strava-name">${info?.name || 'Strava'}</span>
+      <button class="strava-sync-btn" id="sync-btn" onclick="syncStrava()">Sync</button>
+      <button class="strava-sync-btn" onclick="openStravaModal()" style="border-color:rgba(255,255,255,.2);color:var(--stone)">⚙</button>
+    </div>
+    <div class="strava-status" id="strava-status">${lastSync ? `Last sync ${lastSync}` : 'Not yet synced'}</div>`;
+}
+
+function openStravaModal() {
+  const cfg = strava.getConfig();
+  document.getElementById('cfg-client-id').value    = cfg.clientId    || '';
+  document.getElementById('cfg-client-secret').value = cfg.clientSecret || '';
+  document.getElementById('modal-error').textContent = '';
+  document.getElementById('modal-disconnect-link').style.display = strava.isConnected() ? 'block' : 'none';
+  document.getElementById('modal-title').textContent = strava.isConnected() ? 'Strava Settings' : 'Connect to Strava';
+  document.getElementById('strava-modal').classList.add('open');
+}
+
+function closeStravaModal() {
+  document.getElementById('strava-modal').classList.remove('open');
+}
+
+function saveStravaConfig() {
+  const clientId     = document.getElementById('cfg-client-id').value.trim();
+  const clientSecret = document.getElementById('cfg-client-secret').value.trim();
+  if (!clientId || !clientSecret) {
+    document.getElementById('modal-error').textContent = 'Both Client ID and Client Secret are required.';
+    return;
+  }
+  strava.setConfig({ clientId, clientSecret });
+  closeStravaModal();
+  try {
+    strava.startAuth();
+  } catch(e) {
+    document.getElementById('strava-modal').classList.add('open');
+    document.getElementById('modal-error').textContent = e.message;
+  }
+}
+
+function disconnectStrava() {
+  if (!confirm('Disconnect Strava? Your manual completions will be kept.')) return;
+  strava.disconnect();
+  stravaMatches = {};
+  closeStravaModal();
+  renderStravaPanel();
+  renderAll();
+}
+
+async function syncStrava() {
+  const statusEl = document.getElementById('strava-status');
+  const syncBtn  = document.getElementById('sync-btn');
+  if (statusEl) { statusEl.textContent = 'Syncing...'; statusEl.className = 'strava-status syncing'; }
+  if (syncBtn)  syncBtn.disabled = true;
+
+  try {
+    // Fetch from plan start date
+    const planStart = new Date(2026, 2, 30); // Mar 30 2026
+    const activities = await strava.fetchActivities(planStart, { forceRefresh: true });
+    if (activities) {
+      stravaMatches = strava.matchToPlan(activities, PLAN);
+      renderAll();
+      if (statusEl) {
+        const count = Object.keys(stravaMatches).length;
+        statusEl.textContent = `Synced · ${count} workout${count!==1?'s':''} matched`;
+        statusEl.className = 'strava-status';
+      }
+    } else {
+      if (statusEl) { statusEl.textContent = 'Sync failed — reconnect?'; statusEl.className = 'strava-status error'; }
+    }
+  } catch(e) {
+    if (statusEl) { statusEl.textContent = 'Error: ' + e.message; statusEl.className = 'strava-status error'; }
+  }
+
+  if (syncBtn) syncBtn.disabled = false;
+}
+
+// Close modal on overlay click
+document.getElementById('strava-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeStravaModal();
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+(async () => {
+  await loadS();
+
+  // Handle Strava OAuth callback
+  if (window.location.search.includes('code=')) {
+    try {
+      const redirected = await strava.handleCallback();
+      if (redirected) {
+        renderStravaPanel();
+        // Auto-sync after connect
+        await syncStrava();
+      }
+    } catch(e) {
+      console.warn('Strava callback error:', e.message);
+    }
+  }
+
+  // Load cached Strava matches on startup
+  if (strava.isConnected()) {
+    const cached = strava.getCachedActivities();
+    if (cached) stravaMatches = strava.matchToPlan(cached.data, PLAN);
+  }
+
+  renderStravaPanel();
+  renderAll();
+
+  // Scroll to current week
+  setTimeout(() => {
+    for (const p of PLAN) for (const w of p.weeks) {
+      if (isCurrent(w.start)) {
+        const el = document.getElementById('week-' + w.id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
+  }, 300);
+})();
+</script>
+</body>
+</html>
