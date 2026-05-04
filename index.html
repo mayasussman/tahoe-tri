@@ -75,8 +75,17 @@
   .past-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:#e8e4dc;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
   .week-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;min-width:46px}
   .week-title{font-size:12px;font-weight:500;color:var(--text);flex:1}
-  .week-progress{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
-  .week-progress.all-done{color:#3a8a3a;font-weight:500}
+  .week-stats{display:flex;gap:7px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+  .wk-stat{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap}
+  .wk-stat.all-done{color:#3a8a3a;font-weight:500}
+  /* hero summary panel */
+  .summary-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+  .summary-row:last-child{margin-bottom:0}
+  .summary-row-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--sage);width:50px;flex-shrink:0;letter-spacing:.06em;text-transform:uppercase}
+  .summary-row-bar{flex:1;background:rgba(255,255,255,.1);border-radius:2px;height:3px;overflow:hidden}
+  .summary-row-fill{height:100%;border-radius:2px;transition:width .4s ease}
+  .f-workouts{background:var(--gold)}.f-hours{background:var(--lake-light)}.f-miles{background:#8db88d}
+  .summary-row-val{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);white-space:nowrap;min-width:58px;text-align:right}
   .week-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
   .badge-build{background:#e8f0e8;color:#3a6b3a}.badge-recovery{background:#fef3e2;color:#a06820}
   .badge-peak{background:#fde8e0;color:#a03020}.badge-taper{background:#e8eef8;color:#2a4a8a}
@@ -181,10 +190,9 @@
       <h1>Tahoe <span>Off-Road</span> Tri</h1>
     </div>
     <div class="hero-right">
-      <div class="progress-panel">
-        <div class="progress-label">Overall progress</div>
-        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="global-bar" style="width:0%"></div></div>
-        <div class="progress-text" id="global-text">0 / 0 workouts done</div>
+      <div class="progress-panel" id="week-summary-panel">
+        <div class="progress-label" id="summary-label">This week</div>
+        <div id="summary-rows"></div>
       </div>
       <div class="strava-panel" id="strava-panel">
         <button class="strava-connect-btn" id="strava-btn" onclick="openStravaModal()">
@@ -308,6 +316,107 @@ const PILL = t => ({swim:'pill-swim',bike:'pill-bike',run:'pill-run',brick:'pill
 // ── DRAG STATE ─────────────────────────────────────────────────────────────
 let drag = null;
 
+// ── WORKOUT METRICS ────────────────────────────────────────────────────────
+// Parse explicit duration from a workout's text ("2 hr", "45 min", etc.)
+function parseDuration(text) {
+  const t = text.toLowerCase();
+  let h = 0;
+  const hrM  = t.match(/(\d+(?:\.\d+)?)\s*(?:hr|hour)s?/);
+  const minM = t.match(/(\d+)\s*min/);
+  if (hrM)  h += parseFloat(hrM[1]);
+  if (minM) h += parseInt(minM[1]) / 60;
+  return h;
+}
+
+function getPlannedHours(wo) {
+  if (wo.rest) return 0;
+  const text = wo.name + ' ' + (wo.detail || '');
+  const h = parseDuration(text);
+  if (h > 0) return h;
+  // Swim estimate: ~30 min per 1500m
+  if (wo.type === 'swim' || wo.type === 'ows') {
+    const mM = text.match(/([\d,]+)\s*m\b/i);
+    if (mM) return parseInt(mM[1].replace(/,/g,'')) / 1500 * 0.5;
+  }
+  // Run estimate from explicit miles at ~10 min/mile trail pace
+  const miM = text.match(/(\d+(?:\.\d+)?)\s*mi(?:le)?s?/i);
+  if (miM && (wo.type === 'run')) return parseFloat(miM[1]) / 6;
+  return 0;
+}
+
+function getActualHours(wo) {
+  const m = stravaMatches[wo.id];
+  if (m?.movingTime) return m.movingTime / 3600;
+  if (S.done[wo.id]) return getPlannedHours(wo);
+  return 0;
+}
+
+function getPlannedMiles(wo) {
+  if (wo.rest) return 0;
+  const text = wo.name + ' ' + (wo.detail || '');
+  // Range: "14–15 miles"
+  const rangeM = text.match(/(\d+(?:\.\d+)?)\s*[–-]\s*(\d+(?:\.\d+)?)\s*mi(?:le)?s?/i);
+  if (rangeM) return (parseFloat(rangeM[1]) + parseFloat(rangeM[2])) / 2;
+  // Single: "5 miles", "13mi"
+  const miM = text.match(/(\d+(?:\.\d+)?)\s*mi(?:le)?s?/i);
+  if (miM) return parseFloat(miM[1]);
+  // Swim: meters → miles
+  if (wo.type === 'swim' || wo.type === 'ows') {
+    const mM = text.match(/([\d,]+)\s*m\b/i);
+    if (mM) return parseInt(mM[1].replace(/,/g,'')) / 1609.34;
+  }
+  // Estimate runs with only time (~6 mph trail)
+  const h = parseDuration(text);
+  if (h > 0 && wo.type === 'run') return h * 6;
+  return 0;
+}
+
+function getActualMiles(wo) {
+  const m = stravaMatches[wo.id];
+  if (m?.distance) return m.distance / 1609.34;
+  if (S.done[wo.id]) return getPlannedMiles(wo);
+  return 0;
+}
+
+function weekMetrics(w) {
+  const wos = w.days.flatMap(d => d.slots.flatMap(s => s.workouts)).filter(wo => !wo.rest);
+  const planned = { workouts: wos.length, hours: 0, miles: 0 };
+  const done    = { workouts: 0,          hours: 0, miles: 0 };
+  for (const wo of wos) {
+    planned.hours += getPlannedHours(wo);
+    planned.miles += getPlannedMiles(wo);
+    if (S.done[wo.id] || stravaMatches[wo.id]) {
+      done.workouts++;
+      done.hours += getActualHours(wo);
+      done.miles += getActualMiles(wo);
+    }
+  }
+  return { planned, done };
+}
+
+function pct(done, planned) { return planned > 0 ? Math.min(100, Math.round(done / planned * 100)) : 0; }
+function fmtH(h) { return h >= 1 ? `${(Math.round(h * 10) / 10)}h` : `${Math.round(h * 60)}m`; }
+function fmtMi(mi) { return `${(Math.round(mi * 10) / 10)}mi`; }
+
+function summaryRowsHtml(dnW, totW, dnH, totH, dnM, totM) {
+  return `
+    <div class="summary-row">
+      <span class="summary-row-lbl">workouts</span>
+      <div class="summary-row-bar"><div class="summary-row-fill f-workouts" style="width:${pct(dnW,totW)}%"></div></div>
+      <span class="summary-row-val">${dnW} / ${totW}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-row-lbl">hours</span>
+      <div class="summary-row-bar"><div class="summary-row-fill f-hours" style="width:${pct(dnH,totH)}%"></div></div>
+      <span class="summary-row-val">${fmtH(dnH)} / ${fmtH(totH)}</span>
+    </div>
+    <div class="summary-row">
+      <span class="summary-row-lbl">miles</span>
+      <div class="summary-row-bar"><div class="summary-row-fill f-miles" style="width:${pct(dnM,totM)}%"></div></div>
+      <span class="summary-row-val">${fmtMi(dnM)} / ${fmtMi(totM)}</span>
+    </div>`;
+}
+
 // ── RENDER ─────────────────────────────────────────────────────────────────
 function renderStravaBadge(woId) {
   const m = stravaMatches[woId];
@@ -347,11 +456,15 @@ function renderWo(wo) {
 function renderWeek(w) {
   const past = isPast(w.start), cur = isCurrent(w.start);
   const isOpen = S.open[w.id] !== undefined ? S.open[w.id] : (cur || !past);
-  const allWos = w.days.flatMap(d => d.slots.flatMap(s => s.workouts)).filter(wo => !wo.rest);
-  const doneN  = allWos.filter(wo => S.done[wo.id] || stravaMatches[wo.id]).length;
-  const allDone = doneN === allWos.length && allWos.length > 0;
-  const pCls = allDone ? 'week-progress all-done' : 'week-progress';
-  const pTxt = allDone ? '✓ done' : `${doneN}/${allWos.length}`;
+  const { planned, done } = weekMetrics(w);
+  const allDone = done.workouts === planned.workouts && planned.workouts > 0;
+  const weekStatsHtml = allDone
+    ? `<span class="week-stats"><span class="wk-stat all-done">✓ done</span></span>`
+    : `<span class="week-stats">
+        <span class="wk-stat">${done.workouts}/${planned.workouts} wo</span>
+        <span class="wk-stat">${fmtH(done.hours)}/${fmtH(planned.hours)}</span>
+        <span class="wk-stat">${fmtMi(done.miles)}/${fmtMi(planned.miles)}</span>
+       </span>`;
   const statusBadge = cur ? '<span class="current-badge">this week</span>' : past ? '<span class="past-badge">past</span>' : '';
   const cls = ['week-card', cur?'current':past?'past':'', w.raceClass||'', isOpen?'open':''].filter(Boolean).join(' ');
 
@@ -377,7 +490,7 @@ function renderWeek(w) {
       <span class="week-num">Wk ${w.num}</span>
       <span class="week-title">${w.title}</span>
       ${statusBadge}
-      <span class="${pCls}">${pTxt}</span>
+      ${weekStatsHtml}
       <span class="week-badge badge-${w.badge}">${w.badge}</span>
       <span class="week-toggle">▾</span>
     </div>
@@ -399,15 +512,29 @@ function renderAll() {
     ${p.weeks.map(renderWeek).join('')}
   `).join('');
 
-  let tot = 0, dn = 0;
-  PLAN.forEach(p => p.weeks.forEach(w => {
-    const wos = w.days.flatMap(d => d.slots.flatMap(s => s.workouts)).filter(wo => !wo.rest);
-    tot += wos.length;
-    dn  += wos.filter(wo => S.done[wo.id] || stravaMatches[wo.id]).length;
-  }));
-  const pct = tot ? Math.round(dn / tot * 100) : 0;
-  document.getElementById('global-bar').style.width = pct + '%';
-  document.getElementById('global-text').textContent = `${dn} / ${tot} workouts done`;
+  // Update hero summary panel with current week (or overall if between weeks)
+  let currentWeek = null;
+  for (const p of PLAN) for (const w of p.weeks) { if (isCurrent(w.start)) { currentWeek = w; break; } }
+
+  const label = document.getElementById('summary-label');
+  const rows  = document.getElementById('summary-rows');
+  if (rows) {
+    if (currentWeek) {
+      label.textContent = 'This week';
+      const { planned, done } = weekMetrics(currentWeek);
+      rows.innerHTML = summaryRowsHtml(done.workouts, planned.workouts, done.hours, planned.hours, done.miles, planned.miles);
+    } else {
+      label.textContent = 'Overall';
+      let tW=0,dW=0,tH=0,dH=0,tM=0,dM=0;
+      PLAN.forEach(p => p.weeks.forEach(w => {
+        const { planned, done } = weekMetrics(w);
+        tW+=planned.workouts; dW+=done.workouts;
+        tH+=planned.hours;    dH+=done.hours;
+        tM+=planned.miles;    dM+=done.miles;
+      }));
+      rows.innerHTML = summaryRowsHtml(dW,tW,dH,tH,dM,tM);
+    }
+  }
 }
 
 // ── INTERACTIONS ───────────────────────────────────────────────────────────
