@@ -18,45 +18,45 @@
   .hero{background:var(--pine);color:var(--snow);padding:36px 32px 28px;position:relative;overflow:hidden}
   .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(43,108,168,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 10% 90%,rgba(92,124,95,.2) 0%,transparent 60%);pointer-events:none}
   .hero-inner{position:relative;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
-  .hero-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
+  .hero-eyebrow{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
   .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,60px);line-height:.92;letter-spacing:.02em;color:var(--snow)}
   .hero h1 span{color:var(--lake-light)}
   .hero-right{display:flex;flex-direction:column;gap:10px;flex-shrink:0;min-width:170px}
   .progress-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:12px 16px}
-  .progress-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
+  .progress-label{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--sage);margin-bottom:6px}
   .progress-bar-wrap{background:rgba(255,255,255,.1);border-radius:3px;height:5px;margin-bottom:5px;overflow:hidden}
   .progress-bar-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .4s ease}
-  .progress-text{font-family:'DM Mono',monospace;font-size:10px;color:var(--stone)}
+  .progress-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--stone)}
 
   /* ── STRAVA PANEL ── */
   .strava-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:10px 14px}
-  .strava-connect-btn{display:flex;align-items:center;gap:7px;background:var(--strava);color:white;border:none;border-radius:4px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;width:100%;justify-content:center;transition:opacity .15s}
+  .strava-connect-btn{display:flex;align-items:center;gap:7px;background:var(--strava);color:white;border:none;border-radius:4px;padding:7px 12px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;width:100%;justify-content:center;transition:opacity .15s}
   .strava-connect-btn:hover{opacity:.88}
   .strava-connected{display:flex;align-items:center;gap:7px}
   .strava-avatar{width:22px;height:22px;border-radius:50%;object-fit:cover}
-  .strava-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--snow);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .strava-sync-btn{background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:var(--strava);border-radius:3px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .15s}
+  .strava-name{font-family:'DM Mono',monospace;font-size:12px;color:var(--snow);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strava-sync-btn{background:rgba(252,76,2,.15);border:1px solid rgba(252,76,2,.4);color:var(--strava);border-radius:3px;padding:3px 8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .15s}
   .strava-sync-btn:hover{background:rgba(252,76,2,.25)}
   .strava-sync-btn:disabled{opacity:.4;cursor:default}
-  .strava-status{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);margin-top:4px}
+  .strava-status{font-family:'DM Mono',monospace;font-size:11px;color:var(--stone);margin-top:4px}
   .strava-status.syncing{color:var(--gold)}
   .strava-status.error{color:#e07060}
 
   /* ── RACE RIBBON ── */
   .race-ribbon{background:var(--forest);padding:10px 32px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .race-ribbon-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone)}
-  .race-chip{display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:3px;font-size:11px;font-weight:500;color:white;white-space:nowrap}
+  .race-ribbon-label{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone)}
+  .race-chip{display:flex;align-items:center;gap:7px;padding:4px 10px;border-radius:3px;font-size:13px;font-weight:500;color:white;white-space:nowrap}
   .chip-broken{background:var(--broken)}.chip-tahoe{background:var(--lake)}
-  .chip-date{font-family:'DM Mono',monospace;font-size:9px;opacity:.7;font-weight:400}
+  .chip-date{font-family:'DM Mono',monospace;font-size:11px;opacity:.7;font-weight:400}
 
   /* ── LAYOUT ── */
   .container{max-width:880px;margin:0 auto;padding:28px 18px 56px}
   .phase-header{display:flex;align-items:baseline;gap:12px;margin:40px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--stone)}
   .phase-header:first-of-type{margin-top:0}
-  .phase-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--stone);line-height:1;opacity:.4}
-  .phase-info h2{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.05em;color:var(--pine);line-height:1}
-  .phase-info p{font-size:11px;color:var(--muted);margin-top:2px}
-  .phase-weeks{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--lake);text-transform:uppercase;white-space:nowrap}
+  .phase-num{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--stone);line-height:1;opacity:.4}
+  .phase-info h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;color:var(--pine);line-height:1}
+  .phase-info p{font-size:13px;color:var(--muted);margin-top:2px}
+  .phase-weeks{margin-left:auto;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--lake);text-transform:uppercase;white-space:nowrap}
 
   /* ── WEEK CARD ── */
   .week-card{background:white;border:1px solid #ddd6c8;border-radius:6px;margin-bottom:8px;overflow:hidden}
@@ -71,26 +71,26 @@
   .week-card.past .week-header{background:#f8f6f2}
   .week-card.race-broken .week-header{background:#fdf2ee}
   .week-card.race-tahoe .week-header{background:#eef4fb}
-  .current-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:var(--gold);color:#5a3800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-  .past-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:#e8e4dc;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
-  .week-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;min-width:46px}
-  .week-title{font-size:12px;font-weight:500;color:var(--text);flex:1}
+  .current-badge{font-family:'DM Mono',monospace;font-size:11px;padding:2px 7px;border-radius:2px;background:var(--gold);color:#5a3800;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .past-badge{font-family:'DM Mono',monospace;font-size:11px;padding:2px 7px;border-radius:2px;background:#e8e4dc;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .week-num{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;min-width:46px}
+  .week-title{font-size:14px;font-weight:500;color:var(--text);flex:1}
   .week-stats{display:flex;gap:7px;align-items:center;flex-shrink:0;flex-wrap:wrap}
-  .wk-stat{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);white-space:nowrap}
+  .wk-stat{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap}
   .wk-stat.all-done{color:#3a8a3a;font-weight:500}
   /* hero summary panel */
   .summary-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
   .summary-row:last-child{margin-bottom:0}
-  .summary-row-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--sage);width:50px;flex-shrink:0;letter-spacing:.06em;text-transform:uppercase}
+  .summary-row-lbl{font-family:'DM Mono',monospace;font-size:11px;color:var(--sage);width:50px;flex-shrink:0;letter-spacing:.06em;text-transform:uppercase}
   .summary-row-bar{flex:1;background:rgba(255,255,255,.1);border-radius:2px;height:3px;overflow:hidden}
   .summary-row-fill{height:100%;border-radius:2px;transition:width .4s ease}
   .f-workouts{background:var(--gold)}.f-hours{background:var(--lake-light)}.f-miles{background:#8db88d}
-  .summary-row-val{font-family:'DM Mono',monospace;font-size:9px;color:var(--stone);white-space:nowrap;min-width:58px;text-align:right}
-  .week-badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
+  .summary-row-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--stone);white-space:nowrap;min-width:58px;text-align:right}
+  .week-badge{font-family:'DM Mono',monospace;font-size:11px;padding:2px 6px;border-radius:2px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
   .badge-build{background:#e8f0e8;color:#3a6b3a}.badge-recovery{background:#fef3e2;color:#a06820}
   .badge-peak{background:#fde8e0;color:#a03020}.badge-taper{background:#e8eef8;color:#2a4a8a}
   .badge-broken{background:#fce8e0;color:#9a2a10}.badge-race{background:#e0eef8;color:#1a4a8a}
-  .week-toggle{font-size:13px;color:var(--stone);transition:transform .2s;line-height:1}
+  .week-toggle{font-size:15px;color:var(--stone);transition:transform .2s;line-height:1}
   .week-card.open .week-toggle{transform:rotate(180deg)}
   .week-body{display:none}.week-card.open .week-body{display:block}
 
@@ -100,7 +100,7 @@
   .day-row:last-child{border-bottom:none}
   .day-row.today-row{background:#fffbee}
   .day-label-col{width:72px;flex-shrink:0;padding:10px 8px 10px 14px;display:flex;flex-direction:column;justify-content:flex-start;border-right:1px solid #f0ece4;padding-top:12px}
-  .day-name{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .day-name{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
   .day-name.today-label{color:var(--lake)}
   .day-content-col{flex:1;padding:5px 8px;display:flex;flex-direction:column;gap:2px;min-width:0}
 
@@ -108,7 +108,7 @@
   .slot-row{display:flex;flex-direction:column;gap:3px;padding:3px 4px;border-radius:4px;transition:background .1s}
   .slot-row+.slot-row{border-top:1px dashed #eee8dc;margin-top:3px;padding-top:5px}
   .slot-row.drag-over{background:#eef5fb;outline:2px dashed var(--lake-light);outline-offset:-1px}
-  .slot-qual{font-family:'DM Mono',monospace;font-size:9px;color:#bbb;margin-bottom:1px}
+  .slot-qual{font-family:'DM Mono',monospace;font-size:11px;color:#bbb;margin-bottom:1px}
   .slot-wos{display:flex;flex-direction:column;gap:3px}
 
   /* ── WORKOUT CARD ── */
@@ -129,56 +129,56 @@
   .rest-card .workout-check{pointer-events:none;opacity:.35}
   .workout-body{flex:1;min-width:0}
   .workout-top-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:2px}
-  .type-pill{display:inline-block;padding:1px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.07em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+  .type-pill{display:inline-block;padding:1px 6px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:500;white-space:nowrap}
   .pill-swim{background:#deeef8;color:#1a5a90}.pill-bike{background:#deeede;color:#2a6b2a}
   .pill-run{background:#fce8dc;color:#8a3010}.pill-brick{background:#eee0f4;color:#6a2a9a}
   .pill-strength{background:#fef8dc;color:#7a6010}.pill-rest{background:#f0ece4;color:#7a6e60}
   .pill-race{background:#fff0d0;color:#8a5010;border:1px solid #e0b040}.pill-ows{background:#d0e8f8;color:#1a5a90}
   .pill-travel{background:#e8e8f4;color:#404080}
-  .anchor-tag{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#aa8800;background:#fff0c0;padding:1px 4px;border-radius:2px}
-  .workout-name{font-size:12px;color:var(--text);line-height:1.35}
-  .workout-detail{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;line-height:1.35}
-  .slot-empty{font-family:'DM Mono',monospace;font-size:10px;color:#ccc;padding:3px 2px;height:28px;display:flex;align-items:center}
+  .anchor-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#aa8800;background:#fff0c0;padding:1px 4px;border-radius:2px}
+  .workout-name{font-size:14px;color:var(--text);line-height:1.35}
+  .workout-detail{font-size:13px;color:var(--muted);font-style:italic;margin-top:2px;line-height:1.35}
+  .slot-empty{font-family:'DM Mono',monospace;font-size:12px;color:#ccc;padding:3px 2px;height:28px;display:flex;align-items:center}
 
   /* ── STRAVA ACTIVITY BADGE ── */
-  .strava-badge{display:flex;align-items:center;gap:5px;margin-top:4px;padding:3px 6px;background:rgba(252,76,2,.06);border:1px solid rgba(252,76,2,.18);border-radius:3px;font-family:'DM Mono',monospace;font-size:9px;color:#b03a00}
+  .strava-badge{display:flex;align-items:center;gap:5px;margin-top:4px;padding:3px 6px;background:rgba(252,76,2,.06);border:1px solid rgba(252,76,2,.18);border-radius:3px;font-family:'DM Mono',monospace;font-size:11px;color:#b03a00}
   .strava-badge svg{flex-shrink:0;opacity:.8}
   .strava-badge-stats{flex:1;display:flex;gap:6px;flex-wrap:wrap}
-  .strava-badge-name{flex:1;font-size:9px;color:var(--muted);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:300}
-  .strava-badge a{color:var(--strava);text-decoration:none;font-size:9px;opacity:.7;flex-shrink:0}
+  .strava-badge-name{flex:1;font-size:11px;color:var(--muted);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:300}
+  .strava-badge a{color:var(--strava);text-decoration:none;font-size:11px;opacity:.7;flex-shrink:0}
   .strava-badge a:hover{opacity:1}
 
   /* ── RACE BANNER ── */
-  .race-banner{margin:6px 14px 2px;border-radius:4px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;border:1px solid #e8b0a0;background:#fdf2ee;font-size:11px}
-  .race-banner h4{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.05em;color:var(--broken);margin-bottom:3px}
+  .race-banner{margin:6px 14px 2px;border-radius:4px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start;border:1px solid #e8b0a0;background:#fdf2ee;font-size:13px}
+  .race-banner h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.05em;color:var(--broken);margin-bottom:3px}
   .race-banner p{color:var(--muted);line-height:1.45}
   .race-banner p strong{color:var(--text);font-weight:500}
-  .week-notes{margin:4px 14px 12px;background:#fdf8ec;border-left:3px solid var(--gold);padding:9px 12px;font-size:11px;color:var(--muted);border-radius:0 3px 3px 0;line-height:1.5}
+  .week-notes{margin:4px 14px 12px;background:#fdf8ec;border-left:3px solid var(--gold);padding:9px 12px;font-size:13px;color:var(--muted);border-radius:0 3px 3px 0;line-height:1.5}
   .week-notes strong{color:var(--text);font-weight:500}
 
   /* ── MODAL ── */
   .modal-overlay{position:fixed;inset:0;background:rgba(26,46,30,.6);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
   .modal-overlay.open{display:flex}
   .modal{background:white;border-radius:8px;padding:28px;max-width:440px;width:100%;box-shadow:0 16px 48px rgba(0,0,0,.2)}
-  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--pine);margin-bottom:4px}
-  .modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .modal h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.04em;color:var(--pine);margin-bottom:4px}
+  .modal-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
   .modal-sub a{color:var(--lake)}
   .modal-field{margin-bottom:14px}
-  .modal-field label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
-  .modal-field input{width:100%;border:1px solid #ddd6c8;border-radius:4px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text);background:#fdfbf7;outline:none;transition:border-color .15s}
+  .modal-field label{display:block;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .modal-field input{width:100%;border:1px solid #ddd6c8;border-radius:4px;padding:8px 10px;font-family:'DM Mono',monospace;font-size:14px;color:var(--text);background:#fdfbf7;outline:none;transition:border-color .15s}
   .modal-field input:focus{border-color:var(--lake)}
   .modal-actions{display:flex;gap:8px;margin-top:20px}
-  .btn-primary{flex:1;background:var(--strava);color:white;border:none;border-radius:4px;padding:10px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
+  .btn-primary{flex:1;background:var(--strava);color:white;border:none;border-radius:4px;padding:10px;font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:opacity .15s}
   .btn-primary:hover{opacity:.88}
-  .btn-secondary{background:none;color:var(--muted);border:1px solid #ddd6c8;border-radius:4px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:border-color .15s}
+  .btn-secondary{background:none;color:var(--muted);border:1px solid #ddd6c8;border-radius:4px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:border-color .15s}
   .btn-secondary:hover{border-color:var(--stone)}
-  .modal-setup-note{margin-top:16px;padding:10px 12px;background:#f4f0e8;border-radius:4px;font-size:11px;color:var(--muted);line-height:1.6}
-  .modal-setup-note code{font-family:'DM Mono',monospace;font-size:10px;background:#e8e4dc;padding:1px 4px;border-radius:2px}
-  .modal-disconnect{margin-top:12px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);cursor:pointer;text-decoration:underline}
+  .modal-setup-note{margin-top:16px;padding:10px 12px;background:#f4f0e8;border-radius:4px;font-size:13px;color:var(--muted);line-height:1.6}
+  .modal-setup-note code{font-family:'DM Mono',monospace;font-size:12px;background:#e8e4dc;padding:1px 4px;border-radius:2px}
+  .modal-disconnect{margin-top:12px;text-align:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline}
   .modal-disconnect:hover{color:var(--broken)}
-  .modal-error{margin-top:8px;font-size:11px;color:var(--broken);font-family:'DM Mono',monospace}
+  .modal-error{margin-top:8px;font-size:13px;color:var(--broken);font-family:'DM Mono',monospace}
 
-  footer{background:var(--pine);color:var(--stone);text-align:center;padding:16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;margin-top:48px}
+  footer{background:var(--pine);color:var(--stone);text-align:center;padding:16px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;margin-top:48px}
 </style>
 </head>
 <body>
