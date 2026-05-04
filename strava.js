@@ -183,44 +183,63 @@ class StravaClient {
 
   // ── Plan matching ──────────────────────────────────────────────────────────
   // Returns { woId: { stravaId, sportType, name, distance, movingTime, elevation, startDate } }
+  // Pass moved (S.moved) so drag-and-dropped workouts match their new day, not the original one.
 
-  matchToPlan(activities, plan) {
+  matchToPlan(activities, plan, moved = {}) {
     if (!activities) return {};
 
     const DAY_OFFSET = { Mon:0, Tue:1, Wed:2, Thu:3, Fri:4, Sat:5, Sun:6 };
-    const matches = {};
 
-    for (const act of activities) {
-      const actDate  = new Date(act.start_date_local);
-      const woType   = StravaClient.TYPE_MAP[act.sport_type] || StravaClient.TYPE_MAP[act.type];
-      if (!woType) continue;
-
-      for (const phase of plan) {
-        for (const week of phase.weeks) {
-          const [y, m, d] = week.start.split('-').map(Number);
-
-          for (const day of week.days) {
-            const planDate = new Date(y, m - 1, d + (DAY_OFFSET[day.day] ?? 0));
-            if (actDate.toDateString() !== planDate.toDateString()) continue;
-
-            for (const slot of day.slots) {
-              for (const wo of slot.workouts) {
-                if (wo.rest || wo.type !== woType) continue;
-                if (matches[wo.id]) continue; // first match wins
-
-                matches[wo.id] = {
-                  stravaId:  act.id,
-                  sportType: act.sport_type,
-                  name:      act.name,
-                  distance:  act.distance,       // meters
-                  movingTime: act.moving_time,   // seconds
-                  elevation: act.total_elevation_gain, // meters
-                  startDate: act.start_date_local,
-                };
-              }
+    // Build woId → { date, type } from the original plan
+    const woMeta = {};
+    const weekStartOf = {};
+    for (const phase of plan) {
+      for (const week of phase.weeks) {
+        weekStartOf[week.id] = week.start;
+        const [y, m, d] = week.start.split('-').map(Number);
+        for (const day of week.days) {
+          const date = new Date(y, m - 1, d + (DAY_OFFSET[day.day] ?? 0));
+          for (const slot of day.slots) {
+            for (const wo of slot.workouts) {
+              woMeta[wo.id] = { date, type: wo.type, rest: wo.rest };
             }
           }
         }
+      }
+    }
+
+    // Override dates for any dragged workouts (slot key = "weekId|dayName|qual")
+    for (const [slotKey, woIds] of Object.entries(moved)) {
+      const [weekId, dayName] = slotKey.split('|');
+      const start = weekStartOf[weekId];
+      if (!start) continue;
+      const [y, m, d] = start.split('-').map(Number);
+      const date = new Date(y, m - 1, d + (DAY_OFFSET[dayName] ?? 0));
+      for (const woId of woIds) {
+        if (woMeta[woId]) woMeta[woId] = { ...woMeta[woId], date };
+      }
+    }
+
+    const matches = {};
+    for (const act of activities) {
+      const actDate = new Date(act.start_date_local);
+      const woType  = StravaClient.TYPE_MAP[act.sport_type] || StravaClient.TYPE_MAP[act.type];
+      if (!woType) continue;
+
+      for (const [woId, meta] of Object.entries(woMeta)) {
+        if (meta.rest || meta.type !== woType) continue;
+        if (matches[woId]) continue;
+        if (actDate.toDateString() !== meta.date.toDateString()) continue;
+
+        matches[woId] = {
+          stravaId:   act.id,
+          sportType:  act.sport_type,
+          name:       act.name,
+          distance:   act.distance,
+          movingTime: act.moving_time,
+          elevation:  act.total_elevation_gain,
+          startDate:  act.start_date_local,
+        };
       }
     }
 

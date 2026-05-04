@@ -559,7 +559,7 @@ async function syncStrava() {
     const planStart = new Date(2026, 2, 30); // Mar 30 2026
     const activities = await strava.fetchActivities(planStart, { forceRefresh: true });
     if (activities) {
-      stravaMatches = strava.matchToPlan(activities, PLAN);
+      stravaMatches = strava.matchToPlan(activities, PLAN, S.moved);
       renderAll();
       if (statusEl) {
         const count = Object.keys(stravaMatches).length;
@@ -602,7 +602,7 @@ document.getElementById('strava-modal').addEventListener('click', e => {
   // Load cached Strava matches on startup
   if (strava.isConnected()) {
     const cached = strava.getCachedActivities();
-    if (cached) stravaMatches = strava.matchToPlan(cached.data, PLAN);
+    if (cached) stravaMatches = strava.matchToPlan(cached.data, PLAN, S.moved);
   }
 
   renderStravaPanel();
